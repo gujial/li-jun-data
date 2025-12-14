@@ -7,8 +7,8 @@ print(f"Server Log: {msg}")
 
 # 2. 定义 Gradio 界面
 def run_app():
-    with gr.Blocks(title="二中名师模拟器 (Hugging Face版)", theme=gr.themes.Soft()) as demo:
-        gr.Markdown("# 🏫 当代马克思风格演讲生成器 (Powered by Hugging Face)")
+    with gr.Blocks(title="李立军模拟器 (Hugging Face版)", theme=gr.themes.Soft()) as demo:
+        gr.Markdown("# 🏫 李立军风格演讲生成器")
         gr.Markdown(f"状态: *{msg}*")
         
         with gr.Row():
@@ -18,7 +18,7 @@ def run_app():
                 
                 # 模型选择
                 model_repo = gr.Dropdown(
-                    label="选择模型 (推荐 Qwen 或 Llama3)",
+                    label="选择模型",
                     choices=[
                         "Qwen/Qwen2.5-72B-Instruct",  # 中文能力极强，强烈推荐
                         "Qwen/Qwen2.5-7B-Instruct",   # 速度快
@@ -43,7 +43,7 @@ def run_app():
                 
                 with gr.Tabs():
                     with gr.TabItem("AI 回复"):
-                        output_ai = gr.Markdown(label="生成的文章")
+                        output_ai = gr.Markdown(label="生成的文章", min_height=400)
                     
                     with gr.TabItem("调试信息"):
                         output_sys = gr.Textbox(label="System Prompt (含范文)", lines=5)

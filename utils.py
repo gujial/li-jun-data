@@ -91,8 +91,8 @@ def generate_article(model_repo, topic, event, requirements):
         endpoint = HuggingFaceEndpoint(
             repo_id=model_repo,
             huggingfacehub_api_token=api_key,
-            temperature=0.7,     # 稍微高一点以模仿语气
-            max_new_tokens=1024, # 生成长度
+            temperature=0.6,     # 稍微高一点以模仿语气
+            max_new_tokens=4096, # 生成长度
             top_k=50
         )
 
@@ -102,7 +102,7 @@ def generate_article(model_repo, topic, event, requirements):
         # 执行
         response = chain.invoke(runtime_params)
         
-        return sys_display, user_display, response
+        return sys_display, user_display, response.content
 
     except Exception as e:
         return "Prompt生成中...", "Prompt生成中...", f"❌ 调用 AI 失败: {str(e)}\n请检查网络或Token权限。"
