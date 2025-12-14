@@ -1,0 +1,71 @@
+import gradio as gr
+import utils
+
+# 1. 应用启动时尝试初始化数据
+success, msg = utils.init_pipeline()
+print(f"Server Log: {msg}")
+
+# 2. 定义 Gradio 界面
+def run_app():
+    with gr.Blocks(title="二中名师模拟器 (Hugging Face版)", theme=gr.themes.Soft()) as demo:
+        gr.Markdown("# 🏫 当代马克思风格演讲生成器 (Powered by Hugging Face)")
+        gr.Markdown(f"状态: *{msg}*")
+        
+        with gr.Row():
+            # --- 左侧配置区 ---
+            with gr.Column(scale=1):
+                gr.Markdown("### 🛠️ 配置与输入")
+                
+                # API Key 输入 (密码模式)
+                hf_token = gr.Textbox(
+                    label="Hugging Face Token",
+                    placeholder="hf_xxxxxxxxxxxxxxx",
+                    type="password",
+                    info="去 huggingface.co/settings/tokens 免费申请"
+                )
+                
+                # 模型选择
+                model_repo = gr.Dropdown(
+                    label="选择模型 (推荐 Qwen 或 Llama3)",
+                    choices=[
+                        "Qwen/Qwen2.5-72B-Instruct",  # 中文能力极强，强烈推荐
+                        "Qwen/Qwen2.5-7B-Instruct",   # 速度快
+                        "meta-llama/Meta-Llama-3-8B-Instruct",
+                        "mistralai/Mistral-7B-Instruct-v0.3"
+                    ],
+                    value="Qwen/Qwen2.5-72B-Instruct",
+                    interactive=True
+                )
+
+                gr.Markdown("---")
+                
+                input_topic = gr.Textbox(label="演讲主题", value="关于严禁在实验室玩原神")
+                input_event = gr.Textbox(label="导火索事件", value="刚才有个后生做实验的时候在那抽卡", lines=2)
+                input_req = gr.Textbox(label="具体要求", value="痛斥玩物丧志，结合阶层固化，结尾强调实验室纪律", lines=3)
+                
+                btn_submit = gr.Button("🚀 开始生成", variant="primary")
+
+            # --- 右侧结果区 ---
+            with gr.Column(scale=2):
+                gr.Markdown("### 📝 生成结果")
+                
+                with gr.Tabs():
+                    with gr.TabItem("AI 回复"):
+                        output_ai = gr.Markdown(label="生成的文章")
+                    
+                    with gr.TabItem("调试信息"):
+                        output_sys = gr.Textbox(label="System Prompt (含范文)", lines=5)
+                        output_user = gr.Textbox(label="User Prompt (指令)", lines=3)
+
+        # --- 事件绑定 ---
+        btn_submit.click(
+            fn=utils.generate_article, # 调用 utils 里的函数
+            inputs=[hf_token, model_repo, input_topic, input_event, input_req],
+            outputs=[output_sys, output_user, output_ai]
+        )
+
+    return demo
+
+if __name__ == "__main__":
+    app = run_app()
+    app.launch()
