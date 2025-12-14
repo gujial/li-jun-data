@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain_huggingface import HuggingFaceEndpoint
+from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
 # 全局变量缓存 Pipeline，避免重复加载
 PROMPT_PIPELINE = None
@@ -88,18 +88,16 @@ def generate_article(model_repo, topic, event, requirements):
 
         # 4. 调用 Hugging Face
         # 使用 HuggingFaceEndpoint 调用 Serverless API
-        llm = HuggingFaceEndpoint(
+        endpoint = HuggingFaceEndpoint(
             repo_id=model_repo,
             huggingfacehub_api_token=api_key,
             temperature=0.7,     # 稍微高一点以模仿语气
             max_new_tokens=1024, # 生成长度
-            top_k=50,
-            # 指定任务类型为文本生成
-            task="text-generation" 
+            top_k=50
         )
 
-        # 创建 Chain: Prompt -> LLM
-        chain = PROMPT_PIPELINE | llm
+        chat_model = ChatHuggingFace(llm=endpoint)
+        chain = PROMPT_PIPELINE | chat_model
         
         # 执行
         response = chain.invoke(runtime_params)
