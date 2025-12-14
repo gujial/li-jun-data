@@ -52,7 +52,7 @@ def init_pipeline(base_dir=None):
     except Exception as e:
         return False, f"初始化出错: {str(e)}"
 
-def generate_article(api_key, model_repo, topic, event, requirements):
+def generate_article(model_repo, topic, event, requirements):
     """
     核心生成函数
     :param api_key: Hugging Face Access Token
@@ -60,6 +60,8 @@ def generate_article(api_key, model_repo, topic, event, requirements):
     """
     if PROMPT_PIPELINE is None:
         return "Error: Pipeline未初始化", "Error", "Error"
+    
+    api_key = os.getenv("HF_TOKEN")
 
     # 1. 构造参数
     runtime_params = {
@@ -82,7 +84,7 @@ def generate_article(api_key, model_repo, topic, event, requirements):
 
         # 3. 检查 API Key
         if not api_key or not api_key.startswith("hf_"):
-            return sys_display, user_display, "❌ 请输入有效的 Hugging Face API Token (以 hf_ 开头)"
+            return sys_display, user_display, "❌ 请输入有效的 Hugging Face API Token"
 
         # 4. 调用 Hugging Face
         # 使用 HuggingFaceEndpoint 调用 Serverless API

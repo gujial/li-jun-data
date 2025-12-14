@@ -16,14 +16,6 @@ def run_app():
             with gr.Column(scale=1):
                 gr.Markdown("### 🛠️ 配置与输入")
                 
-                # API Key 输入 (密码模式)
-                hf_token = gr.Textbox(
-                    label="Hugging Face Token",
-                    placeholder="hf_xxxxxxxxxxxxxxx",
-                    type="password",
-                    info="去 huggingface.co/settings/tokens 免费申请"
-                )
-                
                 # 模型选择
                 model_repo = gr.Dropdown(
                     label="选择模型 (推荐 Qwen 或 Llama3)",
@@ -60,7 +52,7 @@ def run_app():
         # --- 事件绑定 ---
         btn_submit.click(
             fn=utils.generate_article, # 调用 utils 里的函数
-            inputs=[hf_token, model_repo, input_topic, input_event, input_req],
+            inputs=[ model_repo, input_topic, input_event, input_req],
             outputs=[output_sys, output_user, output_ai]
         )
 
