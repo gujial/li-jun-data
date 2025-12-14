@@ -20,10 +20,9 @@ def run_app():
                 model_repo = gr.Dropdown(
                     label="选择模型",
                     choices=[
-                        "Qwen/Qwen2.5-72B-Instruct",  # 中文能力极强，强烈推荐
-                        "Qwen/Qwen2.5-7B-Instruct",   # 速度快
-                        "meta-llama/Meta-Llama-3-8B-Instruct",
-                        "mistralai/Mistral-7B-Instruct-v0.3"
+                        "Qwen/Qwen2.5-72B-Instruct", 
+                        "Qwen/Qwen3-Next-80B-A3B-Instruct",
+                        "Qwen/Qwen3-235B-A22B-Instruct-2507"
                     ],
                     value="Qwen/Qwen2.5-72B-Instruct",
                     interactive=True
