@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
+from langchain_huggingface import HuggingFacePipeline, ChatHuggingFace
+from dotenv import load_dotenv
 
 # 全局变量缓存 Pipeline，避免重复加载
 PROMPT_PIPELINE = None
@@ -61,6 +62,7 @@ def generate_article(model_repo, topic, event, requirements):
     if PROMPT_PIPELINE is None:
         return "Error: Pipeline未初始化", "Error", "Error"
     
+    load_dotenv()
     api_key = os.getenv("HF_TOKEN")
 
     # 1. 构造参数
@@ -82,21 +84,21 @@ def generate_article(model_repo, topic, event, requirements):
         if len(sys_display) > 800:
             sys_display = sys_display[:800] + "\n\n...(省略长范文)..."
 
-        # 3. 检查 API Key
+        # 3. 检查 API Key 并设置环境变量
         if not api_key or not api_key.startswith("hf_"):
             return sys_display, user_display, "❌ 请输入有效的 Hugging Face API Token"
 
-        # 4. 调用 Hugging Face
-        # 使用 HuggingFaceEndpoint 调用 Serverless API
-        endpoint = HuggingFaceEndpoint(
-            repo_id=model_repo,
-            huggingfacehub_api_token=api_key,
-            temperature=0.6,     # 稍微高一点以模仿语气
-            max_new_tokens=4096, # 生成长度
-            top_k=50
+        os.environ["HF_TOKEN"] = api_key
+
+        # 4. 调用本地模型
+        llm = HuggingFacePipeline.from_model_id(
+            model_id=model_repo,
+            task="text-generation",
+            device=0,  # 使用GPU，如果没有GPU设为-1
+            pipeline_kwargs={"temperature": 0.6, "max_new_tokens": 4096, "top_k": 50},
         )
 
-        chat_model = ChatHuggingFace(llm=endpoint)
+        chat_model = ChatHuggingFace(llm=llm)
         chain = PROMPT_PIPELINE | chat_model
         
         # 执行
