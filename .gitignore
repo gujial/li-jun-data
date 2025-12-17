@@ -1,3 +1,4 @@
 aigc/
 .vscode/
 __pycache__/
+.env
