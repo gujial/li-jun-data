@@ -22,7 +22,8 @@ def run_app():
                     choices=[
                         "Qwen/Qwen2.5-72B-Instruct", 
                         "Qwen/Qwen3-Next-80B-A3B-Instruct",
-                        "Qwen/Qwen3-235B-A22B-Instruct-2507"
+                        "Qwen/Qwen3-235B-A22B-Instruct-2507",
+                        "meta-llama/Llama-3.1-8B-Instruct"
                     ],
                     value="Qwen/Qwen2.5-72B-Instruct",
                     interactive=True
